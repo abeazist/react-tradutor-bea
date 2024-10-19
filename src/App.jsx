@@ -1,5 +1,3 @@
-
-
 function App() {
   const languages = [
     { code: "en-us", name: "Inglês" },
@@ -30,6 +28,10 @@ function App() {
             >
               <option value="pt-br">Português</option>
               <option value="en-us">Inglês</option>
+              <option value="es">Espanhol</option>
+              <option value="fr">Francês</option>
+              <option value="de">Alemão</option>
+              <option value="it">Italiano</option>
             </select>
 
             <button className="p-2 rounded-full hover:bg-gray-100 outline-none">
@@ -55,6 +57,10 @@ function App() {
             >
               <option value="pt-br">Português</option>
               <option value="en-us">Inglês</option>
+              <option value="es">Espanhol</option>
+              <option value="fr">Francês</option>
+              <option value="de">Alemão</option>
+              <option value="it">Italiano</option>
             </select>
           </div>
 
