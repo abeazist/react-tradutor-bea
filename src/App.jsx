@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 function App() {
   const languages = [
@@ -11,9 +11,40 @@ function App() {
     { code: "pt-br", name: "Português" },
   ];
 
-  
-  let isLoading = false
-  let error = ""
+  const [origem, setOrigem] = useState("pt-br"); //opçoes de idioma select
+  const [destino, setDestino] = useState("en-us");
+
+  const [textoOrigem, setTextoOrigem] = useState("");
+  const [textoDestino, setTextoDestino] = useState("");
+
+  const delayArtificial = useDebouncedCallback((term) => {
+    if (term) {
+      fetch(
+        `https://api.mymemory.translated.net/get?q=${textoOrigem}&langpair=${origem}|${destino}`
+      )
+        .then((resposta) => resposta.json())
+        .then((dados) => setTextoDestino(dados.responseData.translatedText))
+        .catch((error) => {
+          setError("Erro ao traduzir dados:", error);
+        })
+    } else {
+      setTextoDestino("");
+    }
+  }, 300);
+
+  useEffect(() => {
+    delayArtificial(textoOrigem);
+  }, [origem, destino, textoOrigem]); //monitorando as variaveis, se elas mudarem ele faz a funcao
+
+  const trocaIdioma = () => {
+    const origemAtual = origem;
+    const destinoAtual = destino;
+
+    setOrigem(destinoAtual);
+    setDestino(origemAtual);
+  };
+  let isLoading = false;
+  let error = "";
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -27,18 +58,20 @@ function App() {
         <div className="w-full max-w-5xl bg-white rounded-lg shadow-md overflow-hidden">
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <select
+              value={origem}
+              onChange={(event) => setOrigem(event.target.value)}
               className="text-sm text-textColor bg-transparent border-none focus:outline-none cursor-pointer"
-              value="en-us"
             >
-              <option value="pt-br">Português</option>
-              <option value="en-us">Inglês</option>
-              <option value="es">Espanhol</option>
-              <option value="fr">Francês</option>
-              <option value="de">Alemão</option>
-              <option value="it">Italiano</option>
+              {languages.map((language) => (
+                <option key={language.code} value={language.code}>
+                  {language.name}
+                </option>
+              ))}
             </select>
-
-            <button className="p-2 rounded-full hover:bg-gray-100 outline-none">
+            <button
+              onClick={trocaIdioma}
+              className="p-2 rounded-full hover:bg-gray-100 outline-none"
+            >
               <svg
                 className="w-5 h-5 text-headerColor"
                 fill="none"
@@ -56,23 +89,25 @@ function App() {
             </button>
 
             <select
+              value={destino}
+              onChange={(evento) => setDestino(evento.target.value)} //evento de mudar algo, no caso mudar o select
               className="text-sm text-textColor bg-transparent border-none focus:outline-none cursor-pointer"
-              value="pt-br"
             >
-              <option value="pt-br">Português</option>
-              <option value="en-us">Inglês</option>
-              <option value="es">Espanhol</option>
-              <option value="fr">Francês</option>
-              <option value="de">Alemão</option>
-              <option value="it">Italiano</option>
+              {languages.map((language) => (
+                <option key={language.code} value={language.code}>
+                  {language.name}
+                </option>
+              ))}
             </select>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div className="p-4">
               <textarea
+                value={textoOrigem} //value é o valor que está no textarea
+                onChange={(evento) => setTextoOrigem(evento.target.value)} //evento de mudar algo, no caso mudar o textarea
                 className="w-full h-40 text-lg text-textColor bg-transparent resize-none border-none outline-none"
-                placeholder="Digite seu texto..."                
+                placeholder="Digite seu texto..."
               ></textarea>
             </div>
 
@@ -82,7 +117,7 @@ function App() {
                   <div className="animate-spin rounded-full h-8 w-8 border-blue-500 border-t-2"></div>
                 </div>
               ) : (
-                <p className="text-lg text-textColor">Colocar aqui o texto traduzido</p>
+                <p className="text-lg text-textColor">{textoDestino}</p>
               )}
             </div>
           </div>
@@ -103,5 +138,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
