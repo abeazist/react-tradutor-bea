@@ -11,18 +11,7 @@ function App() {
     { code: "pt-br", name: "Português" },
   ];
 
-  function Tradutor(){
-    const [texto,setTexto]= useState("")
-    const [traduzido,setTraduzir] = useState("")
-    const [origem, setOrigem] = useState("pt-br"); // idioma de origem
-    const [destino, setDestino] = useState("en-us");
-
-    const traduzir = () =>{
-      
-    }
-
-  }
-
+  
   let isLoading = false
   let error = ""
 
@@ -93,7 +82,7 @@ function App() {
                   <div className="animate-spin rounded-full h-8 w-8 border-blue-500 border-t-2"></div>
                 </div>
               ) : (
-                <p value={traduzido} className="text-lg text-textColor">Colocar aqui o texto traduzido</p>
+                <p className="text-lg text-textColor">Colocar aqui o texto traduzido</p>
               )}
             </div>
           </div>
