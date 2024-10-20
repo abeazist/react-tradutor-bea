@@ -17,8 +17,8 @@ function App() {
   const [textoOrigem, setTextoOrigem] = useState("");
   const [textoDestino, setTextoDestino] = useState("");
 
-  const delayArtificial = useDebouncedCallback((term) => {
-    if (term) {
+  const traduzir = () => {
+    if (textoOrigem) {
       fetch(
         `https://api.mymemory.translated.net/get?q=${textoOrigem}&langpair=${origem}|${destino}`
       )
@@ -26,14 +26,14 @@ function App() {
         .then((dados) => setTextoDestino(dados.responseData.translatedText))
         .catch((error) => {
           setError("Erro ao traduzir dados:", error);
-        })
+        });
     } else {
       setTextoDestino("");
     }
-  }, 300);
+  };
 
   useEffect(() => {
-    delayArtificial(textoOrigem);
+    traduzir(textoOrigem);
   }, [origem, destino, textoOrigem]); //monitorando as variaveis, se elas mudarem ele faz a funcao
 
   const trocaIdioma = () => {
